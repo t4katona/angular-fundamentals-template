@@ -32,3 +32,11 @@
     }
   }
 }
+
+.course-card__info-actions,
+.course-card__buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  column-gap: 1rem;
+}
