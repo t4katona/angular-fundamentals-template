@@ -7,7 +7,7 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 })
 export class CoursesListComponent {
   @Input() courses: any[] = [];
-  @Input() editable: string = "";
+  @Input() editable: boolean = true;
 
   @Output() showCourse = new EventEmitter<string>();
   @Output() editCourse = new EventEmitter<string>();
