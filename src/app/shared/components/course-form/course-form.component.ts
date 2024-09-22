@@ -1,7 +1,14 @@
 import { Component } from "@angular/core";
-import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormArray,
+  FormControl,
+} from "@angular/forms";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
-import { fas } from "@fortawesome/free-solid-svg-icons";
+import { fas, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 
 @Component({
   selector: "app-course-form",
@@ -11,76 +18,86 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 export class CourseFormComponent {
   constructor(public fb: FormBuilder, public library: FaIconLibrary) {
     library.addIconPacks(fas);
+    this.buildForm();
   }
   courseForm!: FormGroup;
   // Use the names `title`, `description`, `author`, 'authors' (for authors list), `duration` for the form controls.
-  submitted: boolean = false;
-  ngOnInit(): void {
+
+  submitted = false;
+  //Icons
+  trashIcon = faTrashCan;
+  addAuthorIcon = faPlus;
+
+  buildForm(): void {
     this.courseForm = this.fb.group({
       title: ["", [Validators.required, Validators.minLength(2)]],
       description: ["", [Validators.required, Validators.minLength(2)]],
-      duration: [null, [Validators.required, Validators.min(0)]],
-      author: [
-        "",
-        [Validators.minLength(2), Validators.pattern(/^[a-zA-Z0-9]+$/)],
-      ],
+      author: ["", [Validators.minLength(2), latinLettersAndNumberChecker()]],
       authors: this.fb.array([]),
       courseAuthors: this.fb.array([]),
+      duration: [0, [Validators.required, Validators.min(0)]],
     });
   }
 
   get title() {
-    return this.courseForm.get("title");
+    return this.courseForm.get("title")!;
   }
 
   get description() {
-    return this.courseForm.get("description");
-  }
-
-  get duration() {
-    return this.courseForm.get("duration");
+    return this.courseForm.get("description")!;
   }
 
   get author() {
-    return this.courseForm.get("author");
+    return this.courseForm.get("author")!;
   }
 
-  get authors(): FormArray {
+  get authors() {
     return this.courseForm.get("authors") as FormArray;
   }
 
-  get courseAuthors(): FormArray {
+  get courseAuthors() {
     return this.courseForm.get("courseAuthors") as FormArray;
   }
 
-  createAuthor(): void {
-    if (this.author?.valid) {
-      this.authors.push(this.fb.control(this.author.value));
+  get duration() {
+    return this.courseForm.get("duration")!;
+  }
+
+  onSubmit() {
+    this.submitted = true;
+  }
+
+  createAuthor() {
+    if (this.author.valid) {
+      let newAuthor = this.fb.control(this.author.value);
+      this.authors.push(newAuthor);
       this.author.reset();
     }
   }
 
-  addAuthor(index: number): void {
-    const authorControl = this.authors.at(index);
-    this.courseAuthors.push(authorControl);
+  addAuthor(index: number) {
+    let authorToMove = this.authors.at(index);
+    this.courseAuthors.push(authorToMove);
     this.authors.removeAt(index);
   }
 
-  deleteAuthor(index: number): void {
-    const authorControl = this.courseAuthors.at(index);
-    this.authors.push(authorControl);
+  removeAuthor(index: number) {
+    let authorToRemove = this.courseAuthors.at(index);
+    this.authors.push(authorToRemove);
     this.courseAuthors.removeAt(index);
   }
 
-  removeAuthor(index: number): void {
-    this.courseAuthors.removeAt(index);
+  deleteAuthor(index: number) {
+    this.authors.removeAt(index);
   }
-
-  onSubmit(): void {
-    this.submitted = true;
-    if (this.courseForm.valid) {
-      // Handle form submission logic
-      console.log(this.courseForm.value);
+}
+function latinLettersAndNumberChecker(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (control.value != null && control.value.trim() != "") {
+      const regex = /^[A-Za-z0-9]+$/;
+      let valid = regex.test(control.value);
+      return valid ? null : { invalidChars: true };
     }
-  }
+    return null;
+  };
 }

@@ -16,14 +16,14 @@
           placeholder="Input text"
         />
         <span
-          *ngIf="title && title.invalid && (submitted || title.touched)"
+          *ngIf="title.invalid && (submitted || title.touched)"
           id="titleErrorMessage"
           class="text-danger"
         >
-          <span *ngIf="title?.errors?.['required']" class="text-danger"
+          <span *ngIf="title.errors?.['required']" class="text-danger"
             >Title is required.</span
           >
-          <span *ngIf="title?.errors?.['minlength']" class="text-danger"
+          <span *ngIf="title.errors?.['minlength']" class="text-danger"
             >Title must be at least 2 characters.</span
           >
         </span>
@@ -41,11 +41,7 @@
           cols="5"
         ></textarea>
         <span
-          *ngIf="
-            description &&
-            description.invalid &&
-            (submitted || description.touched)
-          "
+          *ngIf="description.invalid && (submitted || description.touched)"
           id="descriptionErrorMessage"
           class="text-danger"
         >
@@ -75,34 +71,37 @@
           ></app-button>
         </div>
         <span
-          *ngIf="author && author.invalid && (submitted || author.touched)"
+          *ngIf="author.invalid && (submitted || author.touched)"
           id="authorErrorMessage"
         >
           <span *ngIf="author.errors?.['invalidChars']"
-            >New author should contain only latin letters and numbers.</span
+            >New author should contain only latin letters and numbers</span
           >
           <span *ngIf="author.errors?.['minlength']"
-            >Author must be at least 2 characters.</span
+            >Author must be at least 2 characters long</span
           >
         </span>
         <div class="course__authors">
           <!--Use the name `authors` for the form array.-->
           <div *ngFor="let author of authors.controls; let i = index">
             {{ author.value }}
-            <button type="button" (click)="addAuthor(i)"></button>
+            <button type="button" (click)="addAuthor(i)">
+              <fa-icon [icon]="addAuthorIcon"></fa-icon>
+            </button>
             <button type="button">
-              <fa-icon (click)="deleteAuthor(i)"></fa-icon>
+              <fa-icon [icon]="trashIcon" (click)="deleteAuthor(i)"></fa-icon>
             </button>
           </div>
         </div>
-
         <div>
           <h3>Course Authors</h3>
           <div
             *ngFor="let courseAuthor of courseAuthors.controls; let i = index"
           >
             {{ courseAuthor.value }}
-            <button type="button" (click)="removeAuthor(i)"></button>
+            <button type="button" (click)="removeAuthor(i)">
+              <fa-icon [icon]="trashIcon"></fa-icon>
+            </button>
           </div>
         </div>
       </div>
@@ -119,13 +118,11 @@
             placeholder="Input duration"
           />
           <div class="course__duration">
-            {{ duration?.value | duration }} hours
+            {{ duration.value | duration }} hours
           </div>
         </div>
         <span
-          *ngIf="
-            duration && duration.invalid && (submitted || duration.touched)
-          "
+          *ngIf="duration.invalid && (submitted || duration.touched)"
           id="durationErrorMessage"
           class="text-danger"
         >
