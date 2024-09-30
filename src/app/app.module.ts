@@ -11,6 +11,10 @@ import { CourseInfoModule } from "./features/course-info/course-info.module";
 import { CoursesModule } from "./features/courses/courses.module";
 import { RouterModule } from "@angular/router";
 import { routes } from "./app-routing.module";
+import { WINDOW } from "./auth/services/session-storage.service";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
+import { TokenInterceptor } from "./auth/interceptors/token.interceptor";
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -20,12 +24,19 @@ import { routes } from "./app-routing.module";
     CourseInfoModule,
     CoursesModule,
     RouterModule.forRoot(routes),
+    HttpClientModule,
   ],
   providers: [
     AuthorizedGuard,
     NotAuthorizedGuard,
     CoursesService,
     CoursesStoreService,
+    { provide: WINDOW, useValue: window },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })
