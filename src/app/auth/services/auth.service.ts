@@ -70,6 +70,7 @@ export class AuthService {
 
   get isAuthorised() {
     // Add your code here. Get isAuthorized$$ value
+    console.log("isAuthorized called", this.isAuthorized$$.getValue());
     return this.isAuthorized$$.getValue();
   }
 
