@@ -1,5 +1,9 @@
 import { Component } from "@angular/core";
+import { Router } from "@angular/router";
+import { CoursesStoreService } from "@app/services/courses-store.service";
+import { CourseModel } from "@app/services/courses.service";
 import { mockedAuthorsList, mockedCoursesList } from "@app/shared/mocks/mocks";
+import { Observable } from "rxjs";
 
 @Component({
   selector: "app-courses",
@@ -7,17 +11,21 @@ import { mockedAuthorsList, mockedCoursesList } from "@app/shared/mocks/mocks";
   styleUrls: ["./courses.component.css"],
 })
 export class CoursesComponent {
-  courses: any[] = [];
+  courses$: Observable<CourseModel[]>;
   editable = true;
 
+  constructor(
+    private coursesStoreService: CoursesStoreService,
+    private router: Router
+  ) {
+    this.courses$ = this.coursesStoreService.courses$;
+  }
+
   ngOnInit() {
-    this.courses = mockedCoursesList.map((course) => ({
-      ...course,
-      creationDate: new Date(course.creationDate),
-      authors: course.authors.map((authorID) => {
-        let author = mockedAuthorsList.find((author) => author.id === authorID);
-        return author ? author.name : "No author";
-      }),
-    }));
+    this.coursesStoreService.getAll();
+  }
+
+  onEditCourse(courseId: string) {
+    this.router.navigate(["/courses/edit/", courseId]);
   }
 }

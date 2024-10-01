@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
-import { mockedCoursesList, mockedAuthorsList } from "./shared/mocks/mocks";
-mockedCoursesList;
+import { Router } from "@angular/router";
+import { AuthService } from "./auth/services/auth.service";
 
 @Component({
   selector: "app-root",
@@ -9,20 +9,28 @@ mockedCoursesList;
 })
 export class AppComponent {
   title = "courses-app";
-  coursesMock = mockedCoursesList;
+  isLoggedIn: boolean = false;
+
+  constructor(private router: Router, private authService: AuthService) {}
+
+  login() {
+    this.router.navigate(["/login"]);
+  }
+
+  logout() {
+    this.authService.logout();
+  }
 
   // Course card
   courses: any[] = [];
   editable = true;
 
+  //Track user login to display courses
   ngOnInit() {
-    this.courses = mockedCoursesList.map((course) => ({
-      ...course,
-      creationDate: new Date(course.creationDate),
-      authors: course.authors.map((authorID) => {
-        let author = mockedAuthorsList.find((author) => author.id === authorID);
-        return author ? author.name : "No author";
-      }),
-    }));
+    this.authService.isAuthorized$.subscribe((loggedIn) => {
+      console.log("isL: ", this.isLoggedIn);
+
+      this.isLoggedIn = loggedIn;
+    });
   }
 }

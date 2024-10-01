@@ -1,4 +1,5 @@
-import { Component, Input } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Router } from "@angular/router";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { IconName, fas } from "@fortawesome/free-solid-svg-icons";
 
@@ -8,7 +9,7 @@ import { IconName, fas } from "@fortawesome/free-solid-svg-icons";
   styleUrls: ["./button.component.scss"],
 })
 export class ButtonComponent {
-  constructor(library: FaIconLibrary) {
+  constructor(library: FaIconLibrary, private router: Router) {
     library.addIconPacks(fas);
   }
 

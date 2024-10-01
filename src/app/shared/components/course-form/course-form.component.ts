@@ -9,6 +9,8 @@ import {
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
+import { CourseModel, CoursesService } from "@app/services/courses.service";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-course-form",
@@ -16,10 +18,29 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
   styleUrls: ["./course-form.component.scss"],
 })
 export class CourseFormComponent {
-  constructor(public fb: FormBuilder, public library: FaIconLibrary) {
+  courseId: string | null = null;
+
+  constructor(
+    public fb: FormBuilder,
+    public library: FaIconLibrary,
+    private coursesService: CoursesService,
+    private route: ActivatedRoute
+  ) {
     library.addIconPacks(fas);
     this.buildForm();
   }
+
+  ngOnInit() {
+    this.courseId = this.route.snapshot.paramMap.get("id");
+    console.log("id ", this.courseId);
+
+    //const currentCourse = this.coursesService.getCourse(this.courseId)
+
+    /*if (this.courseId) {
+      this.coursesService.editCourse(this.courseId, )
+    }*/
+  }
+
   courseForm!: FormGroup;
   // Use the names `title`, `description`, `author`, 'authors' (for authors list), `duration` for the form controls.
 
@@ -65,12 +86,20 @@ export class CourseFormComponent {
 
   onSubmit() {
     this.submitted = true;
+    const newCourse = {
+      title: this.courseForm.value.title,
+      description: this.courseForm.value.description,
+      duration: this.courseForm.value.duration,
+      authors: this.courseForm.value.authors,
+    };
   }
 
   createAuthor() {
     if (this.author.valid) {
       let newAuthor = this.fb.control(this.author.value);
       this.authors.push(newAuthor);
+      console.log("test: ", this.authors);
+
       this.author.reset();
     }
   }

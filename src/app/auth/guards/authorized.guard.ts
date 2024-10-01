@@ -6,14 +6,21 @@ import { AuthService } from "../services/auth.service";
   providedIn: "root",
 })
 export class AuthorizedGuard implements CanLoad {
-  // Add your code here
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {
+    console.log(
+      "isAuthorized on component init: ",
+      this.authService.isAuthorised
+    );
+  }
 
-  canLoad(route: Route, segments: UrlSegment[]): boolean | UrlTree {
+  canLoad(route: Route, segments: UrlSegment[]): boolean {
+    console.log("isAuthorized value: ", this.authService.isAuthorised);
     if (this.authService.isAuthorised) {
-      return true;
+      console.log("true");
+      return true; // User is authorized, allow loading the route
     } else {
-      this.router.createUrlTree(["/login"]);
+      console.log("false");
+      this.router.navigate(["/login"]); // Redirect to login if not authorized
       return false;
     }
   }

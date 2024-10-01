@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { CourseModel, CoursesService } from "@app/services/courses.service";
 
 @Component({
   selector: "app-courses-list",
@@ -6,7 +8,13 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
   styleUrls: ["./courses-list.component.css"],
 })
 export class CoursesListComponent {
-  @Input() courses: any[] = [];
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private coursesService: CoursesService
+  ) {}
+
+  @Input() courses: CourseModel[] | null = [];
   @Input() editable: boolean = true;
 
   @Output() showCourse = new EventEmitter<string>();

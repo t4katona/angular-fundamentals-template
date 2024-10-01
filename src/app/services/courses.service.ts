@@ -1,42 +1,87 @@
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import {
+  FailedRequest,
+  SuccessfulRequest,
+} from "@app/auth/services/auth.service";
+import { Observable, catchError, map, throwError } from "rxjs";
+
+export interface CourseModel {
+  title: string;
+  description: string;
+  duration: number;
+  authors: string[];
+  id: string;
+}
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: "root",
 })
 export class CoursesService {
-    getAll() {
-        // Add your code here
-    }
+  constructor(private http: HttpClient) {}
 
-    createCourse(course: any) { // replace 'any' with the required interface
-        // Add your code here
-    }
+  getAll(): Observable<CourseModel[]> {
+    return this.http
+      .get<SuccessfulRequest<CourseModel[] | string> | FailedRequest>(
+        `http://localhost:4000/courses/all`
+      )
+      .pipe(
+        map((response) => {
+          if (response.successful) {
+            // Otherwise, return the course list
+            return response.result as CourseModel[];
+          } else {
+            // Handle failed requests and throw an error
+            throw new Error("Failed to fetch courses");
+          }
+        }),
+        catchError((err) => {
+          console.error("Error fetching courses:", err);
+          return throwError(err);
+        })
+      );
+  }
 
-    editCourse(id: string, course: any) { // replace 'any' with the required interface
-        // Add your code here
-    }
+  createCourse(course: CourseModel) {
+    // replace 'any' with the required interface
+    // Add your code here
+    this.http.post(`http://localhost:4000/courses/add`, course);
+  }
 
-    getCourse(id: string) {
-        // Add your code here
-    }
+  editCourse(id: string, course: CourseModel) {
+    // replace 'any' with the required interface
+    // Add your code here
+    this.http.put(`http://localhost:4000/courses/${id}`, course);
+  }
 
-    deleteCourse(id: string) {
-        // Add your code here
-    }
+  getCourse(id: string) {
+    // Add your code here
+    this.http.get(`http://localhost:4000/courses/${id}`);
+  }
 
-    filterCourses(value: string) {
-        // Add your code here
-    }
+  deleteCourse(id: string) {
+    // Add your code here
+    this.http.delete(`http://localhost:4000/courses/${id}`);
+  }
 
-    getAllAuthors() {
-        // Add your code here
-    }
+  filterCourses(value: string) {
+    // Add your code here
+    let params = new HttpParams().set("value", value);
+    return this.http.get(`http://localhost:4000/courses/filter`, { params });
+  }
 
-    createAuthor(name: string) {
-        // Add your code here
-    }
+  getAllAuthors() {
+    // Add your code here
+    this.http.get(`http://localhost:4000/authors/all`);
+  }
 
-    getAuthorById(id: string) {
-        // Add your code here
-    }
+  createAuthor(name: string) {
+    // Add your code here
+    this.http.post(`http://localhost:4000/authors/add`, name);
+  }
+
+  getAuthorById(id: string) {
+    // Add your code here
+    this.http.get(`http://localhost:4000/authors/${id}`);
+  }
 }

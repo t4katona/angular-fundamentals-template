@@ -1,42 +1,63 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
+import { CourseModel, CoursesService } from "./courses.service";
+import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: "root",
 })
 export class CoursesStoreService {
-    getAll(){
-        // Add your code here
-    }
+  private courses$$ = new BehaviorSubject<CourseModel[]>([]);
+  public courses$: Observable<CourseModel[]> = this.courses$$.asObservable();
 
-    createCourse(course: any) { // replace 'any' with the required interface
-        // Add your code here
-    }
+  private isLoading$$ = new BehaviorSubject<boolean>(false);
+  public isLoading$: Observable<boolean> = this.isLoading$$.asObservable();
 
-    getCourse(id: string) {
-        // Add your code here
-    }
+  constructor(private coursesService: CoursesService) {}
 
-    editCourse(id: string, course: any) { // replace 'any' with the required interface
-        // Add your code here
-    }
+  getAll() {
+    // Add your code here
+    this.isLoading$$.next(true);
+    this.coursesService.getAll().subscribe({
+      next: (courses: CourseModel[]) => {
+        this.courses$$.next(courses);
+        this.isLoading$$.next(false);
+        console.log("test subs: ", this.courses$$);
+      },
+      error: () => this.isLoading$$.next(false),
+    });
+  }
 
-    deleteCourse(id: string) {
-        // Add your code here
-    }
+  createCourse(course: any) {
+    // replace 'any' with the required interface
+    // Add your code here
+  }
 
-    filterCourses(value: string) {
-        // Add your code here
-    }
+  getCourse(id: string) {
+    // Add your code here
+  }
 
-    getAllAuthors() {
-        // Add your code here
-    }
+  editCourse(id: string, course: any) {
+    // replace 'any' with the required interface
+    // Add your code here
+  }
 
-    createAuthor(name: string) {
-        // Add your code here
-    }
+  deleteCourse(id: string) {
+    // Add your code here
+  }
 
-    getAuthorById(id: string) {
-        // Add your code here
-    }
+  filterCourses(value: string) {
+    // Add your code here
+  }
+
+  getAllAuthors() {
+    // Add your code here
+  }
+
+  createAuthor(name: string) {
+    // Add your code here
+  }
+
+  getAuthorById(id: string) {
+    // Add your code here
+  }
 }

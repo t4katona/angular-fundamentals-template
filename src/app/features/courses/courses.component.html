@@ -1,1 +1,6 @@
-<app-courses-list [courses]="courses" [editable]="editable"> </app-courses-list>
+<app-courses-list
+  [courses]="(courses$ | async) ?? []"
+  [editable]="editable"
+  (editCourse)="onEditCourse($event)"
+>
+</app-courses-list>

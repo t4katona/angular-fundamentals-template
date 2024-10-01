@@ -9,13 +9,14 @@ import { CoursesComponent } from "./features/courses/courses.component";
 import { ApplicationConfig } from "@angular/platform-browser";
 import { AuthorizedGuard } from "./auth/guards/authorized.guard";
 import { NotAuthorizedGuard } from "./auth/guards/not-authorized.guard";
+import { AdminGuard } from "./user/guards/admin.guard";
 
 export const routes: Routes = [
   /* Add your code here */
   {
     path: "login",
     component: LoginFormComponent,
-    canActivate: [NotAuthorizedGuard, AuthorizedGuard],
+    canActivate: [NotAuthorizedGuard],
   },
   {
     path: "registration",
@@ -25,17 +26,18 @@ export const routes: Routes = [
   //default
   {
     path: "courses",
-    component: CoursesComponent,
-    canActivate: [AuthorizedGuard],
+
+    loadChildren: () =>
+      import("./features/courses/courses.module").then((m) => m.CoursesModule),
+    canLoad: [AuthorizedGuard],
   },
-  { path: "**", redirectTo: "courses", pathMatch: "full" },
   {
     path: "courses/add",
     component: CourseFormComponent,
-    canActivate: [AuthorizedGuard],
+    canActivate: [AuthorizedGuard, AdminGuard],
   },
   {
-    path: "courses/:id",
+    path: "course/:id",
     component: CourseCardComponent,
     canActivate: [AuthorizedGuard],
   },

@@ -1,16 +1,19 @@
 <div class="courses-list">
-  <div class="course-card">
+  <div class="course-card" *ngIf="courses && courses.length > 0">
     <app-course-card
       *ngFor="let course of courses"
       [title]="course.title"
       [description]="course.description"
-      [creationDate]="course.creationDate"
       [duration]="course.duration"
       [authors]="course.authors"
       [editable]="false"
     >
       <app-button iconName="trash"></app-button>
-      <app-button iconName="pen"></app-button>
+      <app-button
+        iconName="pen"
+        (click)="editCourse.emit(course.id)"
+      ></app-button>
     </app-course-card>
   </div>
+  <!--[creationDate]="course.creationDate"-->
 </div>

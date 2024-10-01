@@ -1,10 +1,14 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: "root",
 })
 export class UserService {
-    getUser() {
-        // Add your code here
-    }
+  constructor(private http: HttpClient) {}
+
+  getUser() {
+    // Add your code here
+    this.http.get(`http://localhost:4000/users/me`);
+  }
 }
