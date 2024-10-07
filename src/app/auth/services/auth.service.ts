@@ -7,6 +7,7 @@ export interface User {
   name?: string;
   email: string;
   password: string;
+  role?: string;
 }
 
 export interface SuccessfulRequest<T> {
@@ -18,6 +19,15 @@ export interface FailedRequest {
   successful: false;
   message?: string;
   errors?: string[];
+}
+
+export interface LoginModule {
+  successful: boolean;
+  result: string;
+  user: {
+    email: string;
+    name: string | null;
+  };
 }
 
 @Injectable({
@@ -33,19 +43,16 @@ export class AuthService {
     private sessionStorage: SessionStorageService
   ) {}
 
-  login(user: User): Observable<SuccessfulRequest<string> | FailedRequest> {
+  login(user: User): Observable<LoginModule> {
     // replace 'any' with the required interface
     // Add your code here
     return this.http
-      .post<SuccessfulRequest<string> | FailedRequest>(
-        `http://localhost:4000/login`,
-        user
-      )
+      .post<LoginModule>(`http://localhost:4000/login`, user)
       .pipe(
-        tap((response) => {
+        tap((response: LoginModule) => {
           if (response.successful) {
             this.sessionStorage.setToken(response.result);
-            this.isAuthorised = true;
+            this.isAuthorized$$.next(true);
           } else {
             this.isAuthorised = false;
           }
@@ -56,7 +63,7 @@ export class AuthService {
   logout() {
     // Add your code here
     this.sessionStorage.deleteToken();
-    this.isAuthorised = false;
+    this.isAuthorized$$.next(false);
   }
 
   register(user: User): Observable<SuccessfulRequest<string> | FailedRequest> {
@@ -81,5 +88,6 @@ export class AuthService {
 
   getLoginUrl() {
     // Add your code here
+    return "http://localhost:4000/login";
   }
 }

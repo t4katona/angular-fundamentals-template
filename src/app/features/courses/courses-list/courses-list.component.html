@@ -6,14 +6,19 @@
       [description]="course.description"
       [duration]="course.duration"
       [authors]="course.authors"
-      [editable]="false"
+      [editable]="editable"
+      (clickOnShow)="showCourse.emit(course.id)"
     >
-      <app-button iconName="trash"></app-button>
-      <app-button
-        iconName="pen"
-        (click)="editCourse.emit(course.id)"
-      ></app-button>
+      <ng-container *ngIf="editable">
+        <app-button
+          iconName="trash"
+          (click)="deleteCourse.emit(course.id)"
+        ></app-button>
+        <app-button
+          iconName="pen"
+          (click)="editCourse.emit(course.id)"
+        ></app-button>
+      </ng-container>
     </app-course-card>
   </div>
-  <!--[creationDate]="course.creationDate"-->
 </div>

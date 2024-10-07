@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { CourseModel, CoursesService } from "@app/services/courses.service";
+import { CourseModel } from "@app/services/courses.service";
+import { UserStoreService } from "@app/user/services/user-store.service";
 
 @Component({
   selector: "app-courses-list",
@@ -8,11 +8,7 @@ import { CourseModel, CoursesService } from "@app/services/courses.service";
   styleUrls: ["./courses-list.component.css"],
 })
 export class CoursesListComponent {
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private coursesService: CoursesService
-  ) {}
+  constructor(public userStoreService: UserStoreService) {}
 
   @Input() courses: CourseModel[] | null = [];
   @Input() editable: boolean = true;

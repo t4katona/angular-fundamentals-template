@@ -4,13 +4,19 @@ import {
   FailedRequest,
   SuccessfulRequest,
 } from "@app/auth/services/auth.service";
-import { Observable, catchError, map, throwError } from "rxjs";
+import { Observable, Observer, catchError, map, throwError } from "rxjs";
 
 export interface CourseModel {
   title: string;
   description: string;
   duration: number;
   authors: string[];
+  id: string;
+  creationDate?: Date;
+}
+
+export interface AuthorModel {
+  name: string;
   id: string;
 }
 
@@ -28,10 +34,8 @@ export class CoursesService {
       .pipe(
         map((response) => {
           if (response.successful) {
-            // Otherwise, return the course list
             return response.result as CourseModel[];
           } else {
-            // Handle failed requests and throw an error
             throw new Error("Failed to fetch courses");
           }
         }),
@@ -42,46 +46,78 @@ export class CoursesService {
       );
   }
 
-  createCourse(course: CourseModel) {
+  createCourse(
+    course: Omit<CourseModel, "id" | "creationDate">
+  ): Observable<CourseModel> {
     // replace 'any' with the required interface
     // Add your code here
-    this.http.post(`http://localhost:4000/courses/add`, course);
+    return this.http
+      .post<{ succesful: boolean; result: CourseModel }>(
+        `http://localhost:4000/courses/add`,
+        course
+      )
+      .pipe(map((response) => response.result));
   }
 
-  editCourse(id: string, course: CourseModel) {
+  editCourse(
+    id: string,
+    course: Omit<CourseModel, "id" | "creationDate">
+  ): Observable<CourseModel> {
     // replace 'any' with the required interface
     // Add your code here
-    this.http.put(`http://localhost:4000/courses/${id}`, course);
+    return this.http
+      .put<{ succesful: boolean; result: CourseModel }>(
+        `http://localhost:4000/courses/${id}`,
+        course
+      )
+      .pipe(map((response) => response.result));
   }
 
-  getCourse(id: string) {
+  getCourse(id: string): Observable<CourseModel> {
     // Add your code here
-    this.http.get(`http://localhost:4000/courses/${id}`);
+    return this.http
+      .get<{ succesful: boolean; result: CourseModel }>(
+        `http://localhost:4000/courses/${id}`
+      )
+      .pipe(map((response) => response.result));
   }
 
-  deleteCourse(id: string) {
+  deleteCourse(id: string): Observable<void> {
     // Add your code here
-    this.http.delete(`http://localhost:4000/courses/${id}`);
+    return this.http.delete<void>(`http://localhost:4000/courses/${id}`);
   }
 
-  filterCourses(value: string) {
+  filterCourses(value: string): Observable<CourseModel[]> {
     // Add your code here
     let params = new HttpParams().set("value", value);
-    return this.http.get(`http://localhost:4000/courses/filter`, { params });
+    return this.http
+      .get<{ successful: boolean; result: CourseModel[] }>(
+        `http://localhost:4000/courses/filter`,
+        { params }
+      )
+      .pipe(map((response) => response.result));
   }
 
-  getAllAuthors() {
+  getAllAuthors(): Observable<AuthorModel[]> {
     // Add your code here
-    this.http.get(`http://localhost:4000/authors/all`);
+    return this.http
+      .get<{ succesfull: boolean; result: AuthorModel[] }>(
+        `http://localhost:4000/authors/all`
+      )
+      .pipe(map((response) => response.result));
   }
 
   createAuthor(name: string) {
     // Add your code here
-    this.http.post(`http://localhost:4000/authors/add`, name);
+    return this.http.post(`http://localhost:4000/authors/add`, { name });
   }
 
-  getAuthorById(id: string) {
+  getAuthorById(id: string): Observable<AuthorModel> {
     // Add your code here
-    this.http.get(`http://localhost:4000/authors/${id}`);
+    return this.http
+      .get<{ succesfull: boolean; result: AuthorModel }>(
+        `http://localhost:4000/authors/${id}`
+      )
+      .pipe(map((response) => response.result));
   }
 }

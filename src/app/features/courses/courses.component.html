@@ -1,6 +1,37 @@
-<app-courses-list
-  [courses]="(courses$ | async) ?? []"
-  [editable]="editable"
-  (editCourse)="onEditCourse($event)"
->
-</app-courses-list>
+<div *ngIf="courses.length > 0; else coursesEmpty">
+  <app-search
+    [placeholder]="'Input text'"
+    (search)="onSearch($event)"
+  ></app-search>
+  <h1>Courses</h1>
+  <div *ngIf="isAllLoading$ | async; else courseList">Loading...</div>
+  <ng-template #courseList>
+    <app-courses-list
+      [courses]="lastSearchTerm ? filteredCourses : courses"
+      [editable]="editable"
+      (deleteCourse)="onDeleteCourse($event)"
+      (editCourse)="onEditCourse($event)"
+      (showCourse)="onShowCourse($event)"
+    >
+    </app-courses-list>
+  </ng-template>
+</div>
+
+<ng-template #coursesEmpty>
+  <app-info
+    title="Your List Is Empty"
+    *ngIf="!(isAdmin$ | async); else adminMessage"
+  ></app-info>
+
+  <ng-template #adminMessage>
+    <app-info
+      title="Your List Is Empty"
+      text="Please use 'Add New Course' button to add your first course."
+    >
+      <app-button
+        buttonText="ADD NEW COURSE"
+        routerLink="/courses/add"
+      ></app-button>
+    </app-info>
+  </ng-template>
+</ng-template>

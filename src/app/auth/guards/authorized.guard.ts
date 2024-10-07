@@ -17,10 +17,10 @@ export class AuthorizedGuard implements CanLoad {
     console.log("isAuthorized value: ", this.authService.isAuthorised);
     if (this.authService.isAuthorised) {
       console.log("true");
-      return true; // User is authorized, allow loading the route
+      return true;
     } else {
       console.log("false");
-      this.router.navigate(["/login"]); // Redirect to login if not authorized
+      this.router.createUrlTree(["/login"]);
       return false;
     }
   }

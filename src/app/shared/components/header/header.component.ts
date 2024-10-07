@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { Router } from "@angular/router";
+import { UserStoreService } from "@app/user/services/user-store.service";
 
 @Component({
   selector: "app-header",
@@ -7,6 +8,7 @@ import { Router } from "@angular/router";
   styleUrls: ["./header.component.scss"],
 })
 export class HeaderComponent {
+  username: string = "";
   constructor(private router: Router) {}
 
   login() {

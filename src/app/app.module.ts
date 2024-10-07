@@ -14,6 +14,9 @@ import { routes } from "./app-routing.module";
 import { WINDOW } from "./auth/services/session-storage.service";
 import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { TokenInterceptor } from "./auth/interceptors/token.interceptor";
+import { StoreModule } from "@ngrx/store";
+import { effects, reducers } from "./store";
+import { EffectsModule } from "@ngrx/effects";
 
 @NgModule({
   declarations: [AppComponent],
@@ -25,6 +28,8 @@ import { TokenInterceptor } from "./auth/interceptors/token.interceptor";
     CoursesModule,
     RouterModule.forRoot(routes),
     HttpClientModule,
+    StoreModule.forRoot(reducers),
+    EffectsModule.forRoot(effects),
   ],
   providers: [
     AuthorizedGuard,

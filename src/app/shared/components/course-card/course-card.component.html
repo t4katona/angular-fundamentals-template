@@ -20,11 +20,15 @@
       </div>
     </div>
     <div class="course-card__info-actions">
-      <app-button buttonText="show course"></app-button>
+      <app-button
+        buttonText="show course"
+        (click)="clickOnShow.emit()"
+      ></app-button>
       <div class="course-card__buttons">
         <!--Enter your code here-->
-        <!--<ng-content *ngIf="editable"></ng-content>-->
-        <ng-content></ng-content>
+        <ng-container *ngIf="editable">
+          <ng-content></ng-content>
+        </ng-container>
       </div>
     </div>
   </div>

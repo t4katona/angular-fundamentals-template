@@ -24,23 +24,20 @@ export class TokenInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const token: unknown = this.sessionStorage.getToken();
-
+    let token = this.sessionStorage.getToken();
+    let cloneReq = req;
     if (token) {
-      req = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
+      cloneReq = req.clone({
+        setHeaders: { Authorization: `${token}` },
       });
     }
-
-    return next.handle(req).pipe(
+    return next.handle(cloneReq).pipe(
       catchError((err: HttpErrorResponse) => {
         if (err.status === 401) {
           this.authService.logout();
           this.router.navigate(["/login"]);
         }
-        return throwError(err);
+        return throwError(() => err);
       })
     );
   }

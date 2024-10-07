@@ -12,33 +12,5 @@
   ></app-button>
 </app-header>
 <div class="app-root">
-  <!-- Search component -->
-  <app-search *ngIf="isLoggedIn" placeholder="Input Text"></app-search>
-
-  <router-outlet *ngIf="!isLoggedIn"></router-outlet>
-
-  <!-- Info component -->
-  <!-- 
-  <app-info
-    title="Your List Is Empty"
-    text="Please use 'Add New Course' button to add your first course"
-  >
-    <app-button buttonText="ADD NEW COURSE"></app-button>
-  </app-info>
-   !-->
-
-  <h1>Courses</h1>
-  <app-courses *ngIf="!isLoggedIn"></app-courses>
-
-  <!-- Login Form component -->
-  <!--<app-login-form></app-login-form>
-
-  <!-- Login Form component -->
-  <!-- <app-registration-form></app-registration-form>-->
-
-  <!-- Login Form component -->
-  <!--<app-course-form></app-course-form>-->
-
-  <!-- Modal component -->
-  <!-- <app-modal [message]="'Message'" [title]="'Title'" [okButtonText]="'Ok'" [cancelButtonText]="'Cancel'"></app-modal> -->
+  <router-outlet></router-outlet>
 </div>

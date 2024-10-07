@@ -1,30 +1,85 @@
-import { Component, Input } from "@angular/core";
-import { mockedCoursesList, mockedAuthorsList } from "@app/shared/mocks/mocks";
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { CoursesStoreService } from "@app/services/courses-store.service";
+import { AuthorModel, CourseModel } from "@app/services/courses.service";
+import { CoursesStateFacade } from "@app/store/courses/courses.facade";
+import { Observable, Subject, takeUntil, tap } from "rxjs";
 
 @Component({
   selector: "app-course-info",
   templateUrl: "./course-info.component.html",
   styleUrls: ["./course-info.component.scss"],
 })
-export class CourseInfoComponent {
-  // Use the names for the input `course`.
-  @Input() title: string = "";
-  @Input() description: string = "";
-  @Input() id: string = "";
-  @Input() creationDate: Date = new Date();
-  @Input() duration: number = 0;
-  @Input() authors: string[] = [];
+export class CourseInfoComponent implements OnInit, OnDestroy {
+  course: CourseModel = {
+    title: "",
+    description: "",
+    duration: 0,
+    authors: [],
+    id: "",
+    creationDate: new Date(),
+  };
 
-  courses: any[] = [];
+  authors: AuthorModel[] = [];
+  private unsubscribe$ = new Subject<void>();
+  isSingleLoading$!: Observable<boolean>;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private coursesStoreService: CoursesStoreService,
+    private coursesStateFacade: CoursesStateFacade
+  ) {}
 
   ngOnInit() {
-    this.courses = mockedCoursesList.map((course) => ({
-      ...course,
-      creationDate: new Date(course.creationDate),
-      authors: course.authors.map((authorID) => {
-        let author = mockedAuthorsList.find((author) => author.id === authorID);
-        return author ? author.name : "No author";
-      }),
-    }));
+    this.isSingleLoading$ = this.coursesStateFacade.isSingleCourseLoading$;
+    let courseId = this.route.snapshot.paramMap.get("id");
+    this.getAllAuthors().subscribe(() => {
+      if (courseId) {
+        this.coursesStateFacade.getSingleCourse(courseId);
+        this.coursesStateFacade.course$
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe((course: CourseModel) => {
+            console.log("Received course data: ", course);
+            this.course = { ...course };
+            this.getAuthorsFromIds();
+          });
+      }
+    });
+  }
+
+  goBack() {
+    this.router.navigate(["./courses"]);
+  }
+
+  getAuthorsFromIds() {
+    if (this.course && this.authors.length) {
+      const authorNames = this.course.authors.map((authorId) => {
+        const author = this.authors.find((el) => el.id === authorId);
+        return author ? author.name : "";
+      });
+      this.course = {
+        ...this.course,
+        authors: authorNames,
+      };
+    }
+  }
+
+  getAllAuthors(): Observable<AuthorModel[]> {
+    return this.coursesStoreService.getAllAuthors().pipe(
+      tap({
+        next: (authors: AuthorModel[]) => {
+          this.authors = authors;
+        },
+        error: (err) => {
+          alert("Failed to load authors.");
+          console.error("Failed to load authors.", err);
+        },
+      })
+    );
+  }
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

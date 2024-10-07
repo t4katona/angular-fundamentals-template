@@ -19,17 +19,11 @@ export class AppComponent {
 
   logout() {
     this.authService.logout();
+    this.router.navigate(["/login"]);
   }
 
-  // Course card
-  courses: any[] = [];
-  editable = true;
-
-  //Track user login to display courses
   ngOnInit() {
     this.authService.isAuthorized$.subscribe((loggedIn) => {
-      console.log("isL: ", this.isLoggedIn);
-
       this.isLoggedIn = loggedIn;
     });
   }

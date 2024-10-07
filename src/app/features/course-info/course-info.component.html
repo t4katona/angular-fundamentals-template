@@ -1,28 +1,28 @@
 <!-- Replace ::text:: with your code -->
-<div class="title">{{ title }}</div>
+<div class="title">{{ course.title }}</div>
 <div class="course-info">
-  <div class="course-info__description">
-    {{ description }}
-  </div>
+  <div class="course-info__description">{{ course.description }}</div>
   <div class="course-info__info">
     <div>
-      <b>ID: </b><span class="course-info__info-id">{{ id }}</span>
+      <b>ID: </b><span class="course-info__info-id">{{ course.id }}</span>
     </div>
     <div>
       <b>Duration: </b
-      ><span class="course-info__info-duration">{{ duration }}</span>
+      ><span class="course-info__info-duration">{{ course.duration }}</span>
     </div>
     <div>
       <b>Created: </b
-      ><span class="course-info__info-date">{{ creationDate }}</span>
+      ><span class="course-info__info-date">{{ course.creationDate }}</span>
     </div>
     <div>
       <b>Authors: </b
-      ><span class="course-info__info-authors">{{ authors }}</span>
+      ><span class="course-info__info-authors">{{
+        course.authors.join(", ")
+      }}</span>
     </div>
   </div>
 </div>
 <div class="navigation-block">
   <!--Enter your code here-->
-  <ng-content></ng-content>
+  <app-button [buttonText]="'Go Back'" (click)="goBack()"></app-button>
 </div>

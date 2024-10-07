@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
 import { AuthService } from "@app/auth/services/auth.service";
-import { EmailValidatorDirective } from "@app/shared/directives/email.directive";
 
 @Component({
   selector: "app-registration-form",
@@ -15,7 +15,8 @@ export class RegistrationFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -38,7 +39,6 @@ export class RegistrationFormComponent {
 
   onSubmit() {
     this.submitted = true;
-    console.log(this.name.value);
     if (this.registrationForm.invalid) return;
     this.authService
       .register({
@@ -50,6 +50,7 @@ export class RegistrationFormComponent {
         next: (response) => {
           if (response.successful) {
             console.log("Registration successful: ", response.result);
+            this.router.navigate(["/login"]);
           } else {
             console.log("Registration failed.");
           }
@@ -58,5 +59,9 @@ export class RegistrationFormComponent {
           console.log("There was an error: ", err);
         },
       });
+  }
+
+  navigateToLogin() {
+    this.router.navigate(["/login"]);
   }
 }
